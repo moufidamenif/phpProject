@@ -1,0 +1,4 @@
+<?PHP 
+//echo $_SERVER['QUERY_STRING']
+echo $_SERVER['REQUEST_URI']
+?>
