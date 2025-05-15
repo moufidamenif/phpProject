@@ -7,8 +7,9 @@
 </head>
 <body>
     <ul>
-        <?php  foreach ($products as $prod )?>
-        <li><?PHP echo"" ?></li>
+        <?php  foreach ($products as $prod ):?>
+        <li><?php echo $prod["name"] ;?></li>
+        <?php endforeach ;?>
     </ul>
 </body>
 </html>
