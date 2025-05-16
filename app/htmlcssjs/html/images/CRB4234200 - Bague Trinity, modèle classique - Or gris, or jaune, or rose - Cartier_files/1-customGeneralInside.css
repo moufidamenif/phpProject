@@ -1,0 +1,72 @@
+.chatPaneOpen #insideChatFrame {
+	transition: transform 0.2s ease 0s !important;
+}
+
+/* prevents overlapping issue with feedback button on tablet devices (bug #36620) */
+[device="3"] #insideChatFrame {
+	right: 50px !important;
+}
+
+/* custom tab size for CARTIER */
+.cartier-chat-theme #inside_liveChatTab {
+  right: 55px!important;
+  width: 55px!important;
+  outline: none;
+}
+
+.cartier-chat-theme #inside_liveChatTab img {
+  width: 100%!important;
+  height: auto!important;
+}
+
+/* #41568 */
+body:not(.inside-chatv2-open) #inside_holder[pageurl*="baume-et-mercier"] >* {
+  z-index: 9;
+}
+
+/* #40271 */
+#inside_holder {
+  --header-height: 0px;
+}
+
+/* #57262 */
+#inside_tabs img {
+	pointer-events:none;
+}
+
+/* #61075 */
+@font-face {
+  font-family: icomoon-backup;
+  font-style: normal;
+  font-weight: 400;
+  src: url(1-icomoon-backup.woff.svg) format("woff")
+}
+
+body.inside-cobrowse-active [class*=" icon-"], 
+body.inside-cobrowse-active [class^="icon-"],
+body.inside-cobrowse-active button.slick-arrow:after,
+body.inside-cobrowse-active .bem-searchfield .base-search-button:before  {
+  font-family: icomoon-backup !important;
+}
+
+/* #63202 */
+body #inside_holder.iOSiPad:not(.videoChat) #insideChatFrame {
+  max-height: none !important;
+}
+
+/* Remove extra padding from Popup event */
+[eventid="178"] .inside_notify_content_message {
+ margin-right: 0 !important;
+}
+
+[eventid="179"] .inside_notify_content_message {
+ margin-right: 0 !important;
+}
+
+/* #76004 - chat pane position on ultra wide screen */
+@media only screen and (min-width: 1920px) {
+    html body #inside_holder[pageurl*="panerai.com"] #inside_tabs,
+	html body #inside_holder[pageurl*="panerai.com"] #insideChatFrame{
+        right: calc(50vw - 940px) !important;
+    }
+}

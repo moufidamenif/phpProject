@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Dashboard - Ajouter Produits</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  body {
+    font-family: 'Georgia', serif;
+    max-width: 600px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #f8f5f1;
+    color: #4b3b2b;
+  }
+  h1 {
+    color: #9c7a55;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+  label {
+    display: block;
+    margin: 1.2rem 0 0.4rem;
+    font-weight: 600;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #9c7a55;
+    border-radius: 6px;
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    background: #fffdfa;
+    color: #4b3b2b;
+  }
+  input:focus, textarea:focus {
+    outline-color: #c4a56f;
+    box-shadow: 0 0 5px #c4a56f;
+  }
+  button {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: #9c7a55;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #7f6544;
+  }
+  #msg {
+    margin-top: 1.5rem;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<h1>Dashboard Admin - Ajouter Produit</h1>
+
+<form id="product-form">
+  <label for="name">Nom du produit :</label>
+  <input type="text" id="name" required />
+
+  <label for="desc">Description :</label>
+  <textarea id="desc" rows="3" required></textarea>
+
+  <label for="price">Prix (€) :</label>
+  <input type="number" id="price" step="0.01" min="0" required />
+
+  <label for="img">URL de l'image :</label>
+  <input type="url" id="img" placeholder="https://exemple.com/image.jpg" required />
+
+  <button type="submit">Ajouter le produit</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+  const form = document.getElementById('product-form');
+  const msg = document.getElementById('msg');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const product = {
+      id: Date.now(),
+      name: document.getElementById('name').value.trim(),
+      desc: document.getElementById('desc').value.trim(),
+      price: parseFloat(document.getElementById('price').value).toFixed(2),
+      img: document.getElementById('img').value.trim()
+    };
+
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    products.push(product);
+    localStorage.setItem('products', JSON.stringify(products));
+
+    msg.textContent = `Produit "${product.name}" ajouté avec succès !`;
+
+    form.reset();
+  });
+</script>
+
+</body>
+</html>

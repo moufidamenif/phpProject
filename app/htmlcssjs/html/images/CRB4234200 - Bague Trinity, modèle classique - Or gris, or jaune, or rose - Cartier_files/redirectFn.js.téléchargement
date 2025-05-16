@@ -1,0 +1,96 @@
+//console.log("redirectFn");
+var productJsonData;
+var currentProduct;
+var isDev;
+$.getJSON('https://3dconfigurator.s3-accelerate.amazonaws.com/autoiFrame/productList.json', function (data) {
+    console.log("PRODUCT LIST ONLINE:");
+    //console.log(data);
+    productJsonData = data;
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    currentProduct = urlParams.get('pId')
+    isDev = urlParams.get('dev')?.toUpperCase();
+    //console.log(isDev);
+    if (currentProduct)
+	{
+		//check CR
+		if(currentProduct.substring(0,2) == "CR")
+			currentProduct = currentProduct.substring(2)
+		
+		creatRevJson();
+	}
+});
+
+var targetParam = window.location.search;
+
+var revJson = {};
+var _dev_pId = [];
+creatRevJson = function () {
+
+    var _jTypeArr = Object.keys(productJsonData);
+
+    // console.log(_jTypeArr);
+
+    _jTypeArr.forEach(function (_jType) {
+        // console.log(_jType);
+
+
+        var _jSeriesArr = Object.keys(productJsonData[_jType]);
+        _jSeriesArr.forEach(function (_jSeries) {
+            // console.log(_jSeries);
+
+
+            var _jSizeArr = Object.keys(productJsonData[_jType][_jSeries]);
+
+            _jSizeArr.forEach(function (_jSize) {
+                // console.log(_jSize);
+
+
+                var _jProductArr = Object.keys(productJsonData[_jType][_jSeries][_jSize]);
+
+                _jProductArr.forEach(function (_jProduct) {
+                    _dev_pId.push(_jProduct);
+                    var obj = new Object();
+                    obj.type = _jType;
+                    obj.series = _jSeries;
+                    obj.size = _jSize;
+
+                    revJson[_jProduct] = obj;
+
+
+                });
+            });
+        });
+    });
+
+	if(revJson[currentProduct] == undefined)
+	{
+		if(currentProduct.substring(0,1) == "B" || currentProduct.substring(0,1) == "N")
+		{
+			currentProduct = currentProduct.substr(0,currentProduct.length - 2) + "00"
+			
+			var url = new URL(location.href)
+			url.searchParams.set('pId', currentProduct)
+			targetParam = url.search;
+		}
+	}
+    //console.log(revJson[currentProduct]);
+    // console.log(isDev);
+    if (revJson[currentProduct].type == "ijewel") {
+        if (isDev == "TRUE") {
+            window.location.replace("https://webgl.cartier.com/CartierJewelry_DEV/index.html" + targetParam);
+        }
+        else {
+            window.location.replace("https://webgl.cartier.com/CartierJewelry/index.html" + targetParam);
+        }
+    } else {
+        if (isDev == "TRUE") {
+            window.location.replace("https://webgl.cartier.com/CartierConfigurator_DEV/index.html" + targetParam);
+        }
+        else {
+            window.location.replace("https://webgl.cartier.com/CartierConfigurator/index.html" + targetParam);
+        }
+    }
+    // console.log(revJson);
+};

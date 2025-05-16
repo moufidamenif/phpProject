@@ -1,0 +1,318 @@
+:root {
+    --gold: #d4af37;
+    --gold-light: #f0e6d2;
+    --gold-dark: #8b5a2b;
+    --error: #ff4d4d;
+}
+
+/* Styles globaux améliorés */
+body {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    background-color: #fafafa;
+}
+
+/* Styles pour la page des produits - Version luxe */
+.products-main {
+    padding: 40px;
+    background: linear-gradient(to bottom, #fff, var(--gold-light));
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.product-card {
+    border: 1px solid var(--gold-light);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to right, var(--gold), var(--gold-dark));
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+}
+
+.product-card h3 {
+    margin: 15px 0 8px;
+    color: var(--gold-dark);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.product-price {
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: #222;
+    position: relative;
+    display: inline-block;
+}
+
+.product-price::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+}
+
+.add-to-cart {
+    background: linear-gradient(to right, var(--gold), var(--gold-dark));
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 100%;
+    transition: all 0.3s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.add-to-cart:hover {
+    background: linear-gradient(to right, var(--gold-dark), var(--gold));
+    box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}
+
+/* Styles pour la page du panier - Version luxe */
+.cart-main {
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s;
+}
+
+.cart-item:hover {
+    background-color: #fffdf9;
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+}
+
+.cart-item-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.cart-item-price {
+    color: var(--gold-dark);
+    font-weight: 500;
+}
+
+.remove-item {
+    color: var(--error);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1.3em;
+    transition: transform 0.2s;
+}
+
+.remove-item:hover {
+    transform: scale(1.1);
+}
+
+.cart-summary {
+    background: #fffaf3;
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid var(--gold-light);
+}
+
+.summary-total {
+    font-weight: bold;
+    font-size: 1.3em;
+    border-top: 1px solid var(--gold-light);
+    padding-top: 15px;
+    color: var(--gold-dark);
+}
+
+.btn-checkout {
+    background: linear-gradient(to right, var(--gold), var(--gold-dark));
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 25px;
+    font-size: 1.1em;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.btn-checkout:hover {
+    background: linear-gradient(to right, var(--gold-dark), var(--gold));
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+/* Styles pour les pages d'authentification - Version luxe */
+.auth-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 40px;
+    background: linear-gradient(135deg, #fff 0%, var(--gold-light) 100%);
+}
+
+.auth-box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    border-top: 4px solid var(--gold);
+}
+
+.auth-box h2 {
+    margin-bottom: 25px;
+    color: var(--gold-dark);
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.auth-box h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), var(--gold-dark));
+}
+
+.form-group input {
+    border: 1px solid #ddd;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+.auth-btn {
+    background: linear-gradient(to right, var(--gold), var(--gold-dark));
+    color: white;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 15px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.auth-btn:hover {
+    background: linear-gradient(to right, var(--gold-dark), var(--gold));
+    box-shadow: 0 5px 15px rgba(139, 90, 43, 0.3);
+}
+
+.auth-link {
+    color: var(--gold-dark);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.auth-link:hover {
+    color: var(--gold);
+    text-decoration: underline;
+}
+
+/* Animations et effets spéciaux */
+@keyframes sparkle {
+    0% { opacity: 0.3; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.3; transform: scale(0.95); }
+}
+
+.diamond-icon {
+    animation: sparkle 2s infinite ease-in-out;
+    color: var(--gold);
+    display: inline-block;
+}
+
+.luxe-border {
+    border: 1px solid var(--gold-light);
+    position: relative;
+    border-radius: 8px;
+}
+
+.luxe-border::after {
+    content: "";
+    position: absolute;
+    top: -3px; 
+    left: -3px;
+    right: -3px; 
+    bottom: -3px;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* Effet de brillance au survol */
+.glow-on-hover {
+    transition: box-shadow 0.3s;
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
