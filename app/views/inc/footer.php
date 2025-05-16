@@ -21,10 +21,9 @@
   <body>
 
   
-<!-- Remove the container if you want to extend the Footer to full width. -->
-<div class=" my-5 width-total-container footer-flex">
+
   <!-- Footer -->
-  <footer class="text-center text-white" style="background-color: #3f51b5">
+  <footer class="text-center text-white" style="background-color: bisque">
     <!-- Grid container -->
     <div class=" width-total-container">
       <!-- Section: Links -->
@@ -122,15 +121,12 @@
          class="text-center p-3"
          style="background-color: rgba(0, 0, 0, 0.2)"
          >
-      © 2020 Copyright:
-      <a class="text-white" href="https://mdbootstrap.com/"
-         >MDBootstrap.com</a
-        >
+      © 2024 Copyright:
+      
     </div>
     <!-- Copyright -->
   </footer>
   <!-- Footer -->
-</div>
-<!-- End of .container -->
+
  </body>
  </html>

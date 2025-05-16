@@ -106,13 +106,8 @@
     </style>
 </head>
 <body>
-    <header class="luxe-header">
-        <div class="container">
-            <div class="luxe-logo">Luxe Bijoux</div>
-            <!-- Navigation principale -->
-        </div>
-    </header>
-
+    
+<?php include (VIEWS."inc/navbar.php")?>
     <section class="account-hero">
         <div>
             <h1 style="font-family: 'Playfair Display', serif;">Votre Espace Client</h1>
@@ -182,5 +177,6 @@
             }
         });
     </script>
+    <?php include (VIEWS."inc/footer.php")?>
 </body>
 </html>

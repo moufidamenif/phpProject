@@ -88,91 +88,36 @@
 <body>
     <div class="background-image"></div>
     
-    <header>
-        <div class="container">
-            <h1 class="logo">Luxe Bijoux</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Accueil</a></li>
-                    <li><a href="products.html">Nos Bijoux</a></li>
-                    <li><a href="cart.html">Panier</a></li>
-                </ul>
-            </nav>
-            <div class="user-actions">
-                <a href="login.html" class="btn login-btn active">Connexion</a>
-                <a href="register.html" class="btn register-btn">Inscription</a>
-            </div>
-        </div>
-    </header>
+<?php include(VIEWS . "inc/navbar.php") ?>
 
     <main class="auth-main">
         <div class="auth-box">
             <h2 class="auth-title">Connexion</h2>
             
-            <form id="login-form">
+            <form id="login-form"  method="POST"action ="<?PHP  url("user/loggedIn")?>">
                 <div class="form-group">
                     <label for="email" class="form-label">Email :</label>
-                    <input type="email" id="email" class="form-input" required>
+                    <input type="email" id="email" class="form-input"  name="emailLogin"required>
                 </div>
                 
                 <div class="form-group">
                     <label for="password" class="form-label">Mot de passe :</label>
-                    <input type="password" id="password" class="form-input" required minlength="6">
+                    <input type="password" id="password" class="form-input" required minlength="6" name="passwordLogin">
                 </div>
                 
-                <div id="error-message" class="error-message"></div>
                 
-                <button type="submit" class="btn-auth">Se connecter</button>
+                <input type="submit" class="btn-auth">Se connecter</input>
                 
                 <div class="auth-footer">
-                    <p>Pas encore de compte ? <a href="register.html" class="auth-link">Créez un compte</a></p>
+                    <p>Pas encore de compte ? <a href="<?php url("user/signUp")?>" class="auth-link">Créez un compte</a></p>
                     <p><a href="#" class="auth-link">Mot de passe oublié ?</a></p>
                 </div>
             </form>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 Luxe Bijoux. Tous droits réservés.</p>
-        </div>
-    </footer>
+    <?php include(VIEWS . "inc/footer.php") ?>
 
-    <script src="js/auth.js"></script>
-    <script>
-        // Gestion spécifique de la page de connexion
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorElement = document.getElementById('error-message');
-            
-            // Réinitialiser le message d'erreur
-            errorElement.style.display = 'none';
-            
-            // Récupérer les utilisateurs enregistrés
-            const users = JSON.parse(localStorage.getItem('users')) || [];
-            
-            // Trouver l'utilisateur
-            const user = users.find(u => u.email === email && u.password === password);
-            
-            if (user) {
-                // Stocker les informations de session
-                sessionStorage.setItem('currentUser', JSON.stringify(user));
-                
-                // Redirection en fonction du type d'utilisateur
-                if (user.isAdmin) {
-                    window.location.href = "admin/index.html";
-                } else {
-                    window.location.href = "index.html";
-                }
-            } else {
-                // Afficher l'erreur
-                errorElement.textContent = "Email ou mot de passe incorrect";
-                errorElement.style.display = 'block';
-            }
-        });
-    </script>
+   
 </body>
 </html>

@@ -8,9 +8,11 @@ define("CONFIGDB",value: CONFIG.'config'.DS);
 define("CONTROLLERS",APP.'controllers'.DS);
 define("MODELS",APP.'models'.DS);
 define("VIEWS",APP.'views'.DS);
-define("UPLOADS",ROOT_PATH.'public'.DS.'uploads'.DS);
 define("LIBS",ROOT_PATH.'lib'.DS);
+define("IMAGES_URL", '/assets/images');
 define("BURL","http://localhost:8000/");
+define("UPLOADS", ROOT_PATH . "public" . DS . "uploads" . DS);
+
 // configuration files 
 require_once(CONFIG.'config.php');
 require_once(CONFIG.'helpers.php');

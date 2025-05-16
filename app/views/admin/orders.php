@@ -7,12 +7,8 @@
     <!-- Utilisez les mêmes styles que products.html -->
 </head>
 <body>
-    <script>
-        if (!sessionStorage.getItem('isAdmin')) {
-            window.location.href = "../login.html";
-        }
-    </script>
-
+   
+<?php include (VIEWS."inc/navbarAdmin.php")?>
     <div class="admin-container">
         <div class="admin-sidebar">
             <h2>Administration</h2>
@@ -42,5 +38,6 @@
             </table>
         </div>
     </div>
+    <?php include (VIEWS."inc/footer.php")?>
 </body>
 </html>

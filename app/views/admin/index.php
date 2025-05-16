@@ -203,26 +203,8 @@
     </style>
 </head>
 <body>
-    <script>
-        // Vérification de connexion
-        if (!sessionStorage.getItem('isAdmin')) {
-            window.location.href = "../login.html";
-        }
-    </script>
 
-    <div class="admin-container">
-        <!-- Barre latérale luxueuse -->
-        <div class="admin-sidebar">
-            <h2>Administration</h2>
-            <nav>
-                <ul>
-                    <li><a href="index.html" class="active">Tableau de bord</a></li>
-                    <li><a href="products.html">Produits</a></li>
-                    <li><a href="orders.html">Commandes</a></li>
-                    <li><a href="#" onclick="logout()">Déconnexion</a></li>
-                </ul>
-            </nav>
-        </div>
+<?php include (VIEWS."inc/navbarAdmin.php")?>
 
         <!-- Contenu principal -->
         <div class="admin-main">
@@ -239,12 +221,8 @@
             </div>
         </div>
     </div>
+    <?php include (VIEWS."inc/footer.php")?>
 
-    <script>
-        function logout() {
-            sessionStorage.removeItem('isAdmin');
-            window.location.href = "../index.html";
-        }
-    </script>
+   
 </body>
 </html>

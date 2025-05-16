@@ -22,22 +22,17 @@
     </style>
 </head>
 <body>
-    <script>
-        if (!sessionStorage.getItem('isAdmin')) {
-            window.location.href = "../login.html";
-        }
-    </script>
+  <?php include (VIEWS."inc/navbarAdmin.php")?>
 
     <div class="admin-container">
         <div class="admin-sidebar">
-            <h2>Administration</h2>
-            <nav><!-- Identique à index.html --></nav>
+           
         </div>
 
         <div class="admin-main">
             <h1>Gestion des Produits</h1>
             
-            <button onclick="addProduct()">+ Ajouter un produit</button>
+            <button >+ Ajouter un produit</button>
             
             <table>
                 <thead>
@@ -63,10 +58,6 @@
         </div>
     </div>
 
-    <script>
-        function addProduct() {
-            alert("Fonctionnalité à implémenter !");
-        }
-    </script>
+    <?php include (VIEWS."inc/footer.php")?>
 </body>
 </html>
