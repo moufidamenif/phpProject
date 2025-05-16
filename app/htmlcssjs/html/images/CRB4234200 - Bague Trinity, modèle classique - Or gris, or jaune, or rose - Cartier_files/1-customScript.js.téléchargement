@@ -1,0 +1,408 @@
+/**
+ * Custom code for Google Analytics
+ * https://powerfront.tpondemand.com/entity/37653-richemontcustom-google-analytics-events-dsvc-2262
+ */
+!function ($) {
+  function trackEvent(event) {
+    $.inside.ga(event);
+  }
+
+  function getTrackingLabel() {
+    return insideFrontInterface.getAvailableAssistants().length ? 'Online' : 'Offline';
+  }
+
+  function getChatCategory() {
+    return insideChatCategory || 'Inside : Reactive Chat';
+  }
+
+  function isPreChatVA() {
+    const currentVA = insideChatPane.getCurrentWorkflow();
+    return currentVA && currentVA.step && currentVA.step.name.toLowerCase().search(/(initial|menu|offline)/) > -1;
+  }
+
+  function isOfflineVA(id) {
+    return parseInt(insideFrontInterface.chatSettings.offline.workflow) === parseInt(id);
+  }
+
+  function isProactiveChat() {
+    if (typeof insideChatPane === "undefined" || typeof insideChatPane.getCurrentWorkflow === "undefined") return false;
+    const currentVA = insideChatPane.getCurrentWorkflow();
+    const isBot = currentVA && currentVA.isBot;
+    return (insideChatPane.lastMessageFrom && insideChatPane.lastMessageFrom.search('assistant') > -1 && !insideChatPane.activeChat && !insideChatPane.chatEnded && !isBot);
+  }
+
+  _insideGraph.defer(function () {
+    $(insideChatPane.frame.contentDocument)
+      .on('click', '.picklistOption', picklistOptionClicked)
+      .on('click', '.workflowMessage a', linkClicked)
+      .on('click', '.surveyNextButton', surveyNextButtonClicked);
+  }, function () {
+    return typeof insideChatPane !== 'undefined' && insideChatPane.frame && insideChatPane.chatPane;
+  });
+
+  //#region Virtual Assistant Task Based Events
+  _insideGraph.bind('picklistRendered', function () {
+    if (isPreChatVA()) {
+      trackEvent({
+        category: 'Inside : Virtual Assistant',
+        action: 'View',
+        label: getTrackingLabel(),
+      });
+    }
+  });
+
+  function picklistOptionClicked() {
+    if (isPreChatVA()) {
+      trackEvent({
+        category: 'Inside : Virtual Assistant',
+        action: `Menu Click (${getTrackingLabel()})`,
+        label: this.getAttribute('aria-label'),
+      });
+    }
+  }
+
+  function linkClicked() {
+    if (isPreChatVA() || isOfflineVA($(this).closest('.workflowMessage').attr('wfid'))) {
+      trackEvent({
+        category: 'Inside : Virtual Assistant',
+        action: `Link Click (${getTrackingLabel()})`,
+        label: this.innerText,
+        value: this.href
+      });
+    }
+  }
+
+  let chatPaneCloseTriggered = false;
+  _insideGraph.bind('closechat', function () {
+    if (isPreChatVA() && !chatPaneCloseTriggered) {
+      trackEvent({
+        category: 'Inside : Virtual Assistant',
+        action: "Close",
+        label: getTrackingLabel(),
+      });
+      // prevent duplicated events
+      chatPaneCloseTriggered = true;
+      setTimeout(() => {
+        chatPaneCloseTriggered = false;
+      }, 1000);
+    }
+  })
+  //#endregion
+
+  //#region Proactive Chat Events
+  _insideGraph.bind('chatnotification', function () {
+    if (isProactiveChat()) {
+      insideChatCategory = "Inside : Proactive Chat";
+      trackEvent({
+        category: getChatCategory(),
+        action: "View",
+        label: 'Online'
+      });
+    }
+  })
+
+  let visitorClickOnProactiveChat = false;
+  _insideGraph.bind('openchat', function () {
+    if (insideChatPane.frame.classList.contains('notificationMode')) {
+      trackEvent({
+        category: getChatCategory(),
+        action: "Click",
+        label: 'Online'
+      });
+    }
+  })
+
+  // triggered when Visitor responds to the Proactive Chat 
+  $.inside.bind("chat", function (messages) {
+    const lastMessage = messages[messages.length - 1];
+    const fromWorkflowBot = lastMessage.metadata && lastMessage.metadata.fromWorkflowBot;
+    insideChatPane.chatEnded = false;
+    if (lastMessage.text == "/stopchat") {
+      insideChatPane.chatEnded = true;
+    }
+
+    if (isProactiveChat() && lastMessage.fromid.startsWith('user:')) {
+      // trackEvent({
+      //   category: 'Inside : Proactive Chat',
+      //   action: "Started",
+      //   label: insideFrontInterface.getLastMessageAssistantName(),
+      //   value: parseInt(insideFrontInterface.getLastMessageOperatorId())
+      // });
+    } else if (isProactiveChat() && lastMessage.fromid.startsWith('assistant:') && !fromWorkflowBot) {
+      trackEvent({
+        category: 'Inside : Proactive Chat',
+        action: "View",
+        label: getTrackingLabel(),
+      });
+    }
+  });
+  //#endregion
+
+  //#region Chat Events
+  // Store the insideChatCategory for other events (Proactive & End Chat)
+  let insideChatCategory = sessionStorage.getItem('insideChatCategory');
+  _insideGraph.bind("googleAnalytics", function (event) {
+    console.log('googleAnalytics', event);
+    if (event.action === 'Started' || event.action === 'Active') {
+      insideChatCategory = event.category;
+      sessionStorage.setItem('insideChatCategory', insideChatCategory);
+    }
+  });
+
+  // Bind to queuePos & chataccepted to trigger Reactive Chat Started event
+  let reactiveChat = false;
+  $.inside.bind("queuePos", function (response) {
+    if (response.pos === 0) {
+      reactiveChat = true;
+    }
+  });
+  $.inside.bind("chataccepted", function (response) {
+    if (reactiveChat) {
+      trackEvent({
+        category: 'Inside : Reactive Chat',
+        action: "Started",
+        label: response.opname,
+        value: response.opid
+      });
+      trackEvent({
+        category: 'Inside : Reactive Chat',
+        action: "Active",
+        label: response.opname,
+        value: response.opid
+      });
+      reactiveChat = false;
+    }
+  });
+
+
+
+  function surveyNextButtonClicked() {
+    const surveyQuestionContainer = $(this).closest('.surveyQuestionContainer');
+    trackEvent({
+      category: 'Inside : Post Chat Survey',
+      action: "Submit",
+      label: surveyQuestionContainer.find('.questionText').text(),
+      value: getSurveyValue(surveyQuestionContainer)
+    });
+  }
+
+  function getSurveyValue(container) {
+    if (container.find('textarea').length) {
+      return container.find('textarea').val();
+    } else if (container.find('.surveyContent .inside_starSelector').length) {
+      return container.find('.surveyContent .inside_starSelector .star.selected').length;
+    } else if (container.find('.surveyContent .npsContainer').length) {
+      return parseInt(container.find('.surveyContent .npsContainer li.selected').attr('value'));
+    }
+  }
+  //#endregion
+
+  //#region End Chat Events
+  _insideGraph.bind('chatended', function (data) {
+    insideChatPane.chatEnded = true;
+    if (data.endedBy === 'visitor') {
+      trackEvent({
+        category: getChatCategory(),
+        action: "Closed",
+        label: 'Visitor'
+      });
+      insideChatCategory = 'Inside : Reactive Chat'; // reset category to reactive
+    }
+  });
+  //#endregion
+
+  // When Visitor appears on the websites. After the first tracking, "avatar_id" needs to be pushed to dataLayer where value_of_the_avatar_id = {visitor_id}_{gcp server_id} -> example 755351_eu5
+  const serverIds = {
+    'IN-1001071': 'us4',
+    'IN-1001072': 'eu5',
+    'IN-1001073': 'asia4',
+    'IN-1007001': 'us4',
+    'IN-1008001': 'eu5',
+    'IN-1001101': 'as4',
+  };
+  try {
+    window.dataLayer.push({
+      "avatar_id": insideFrontInterface.chat.userid.split(':')[2] + '_' + serverIds[_insideGraph.current.account]
+    });
+  } catch (error) { }
+  
+}(_insideGraph.jQuery);
+
+
+/**
+ * Custom code to handle creative updates
+ */
+!function ($) {
+  let chatDocument, websiteId;
+
+  function processMessages(messages) {
+    const lastMessage = messages[messages.length - 1];
+    if(lastMessage.metadata && lastMessage.metadata.workflowStepId === parseInt(_insideGraph.getCookie('insidePrivacyPolicyStepId'))) {
+      _insideGraph.defer(() => {
+        koreaCustomization($(insideChatPane.chatPaneContent).find(`.message[mid="${lastMessage.id}"]`));
+      }, function () {
+        return insideChatPane.chatPaneContent.querySelector(`.message[mid="${lastMessage.id}"]`);
+      });
+    }
+  }
+
+  function koreaCustomization(workflowMessage) {
+    if(!insideChatPane.isOpen()) {
+      setTimeout(() => {
+        koreaCustomization(workflowMessage);
+      }, 200);
+      return;
+    }
+
+    if(!workflowMessage) {
+      const workflowId = insideChatPane.getCurrentWorkflow().workflowId;
+      workflowMessage = $(insideChatPane.chatPane).find(
+        `.workflowMessage.lastOperatorMessage[wfid=${workflowId}]:not(.customized)`
+      );
+    }
+    
+    if (workflowMessage.length) {
+      workflowMessage.addClass('customized');
+      _insideGraph.setCookie('insidePrivacyPolicyStepId', workflowMessage.attr('stepid'), 60); 
+      const workflowMessageContent = $(workflowMessage).find(`.content`);
+      let contentContainer = $(workflowMessageContent)[0].firstChild;
+      if(contentContainer.tagName !== 'DIV') {
+        contentContainer = document.createElement('div');
+        $(workflowMessageContent).contents().each(function () {
+          if(!$(this).hasClass('picklist')) {
+            contentContainer.append(this);
+          }
+        });
+        $(workflowMessageContent).prepend(contentContainer);
+      }
+      const hasSeeMoreButton = $(workflowMessageContent).find(".seeMoreButton");
+      const className = "workflowMessage-custom-ui";
+
+      if(!contentContainer || contentContainer.classList.contains('accepted')) {
+        return;
+      } else if( _insideGraph.getCookie('insidePrivacyPolicy') === 'Accept') {
+        let currentVA = insideChatPane.getCurrentWorkflow(), message = `You have previously agreed to our Privacy Policy. Please click 'Accept' to confirm and continue.`;
+        if(currentVA) {
+          message = currentVA.step.questionTextExistingData;
+          _insideGraph.setCookie('insidePrivacyConfirmationMessage', message, 60); 
+        } else {
+          message = _insideGraph.getCookie('insidePrivacyConfirmationMessage'); 
+        }
+        
+        contentContainer.innerHTML = message;
+        contentContainer.classList.add('accepted');
+      } else if (!hasSeeMoreButton.length) {
+        contentContainer.classList.add(className);
+
+        try {
+          const isTextClamped = contentContainer.scrollHeight > contentContainer.clientHeight;
+          if(isTextClamped) {
+            const seeMore = document.createElement("a");
+            seeMore.textContent = "See more";
+            seeMore.classList.add("seeMoreButton");
+            seeMore.onclick = () => {
+              contentContainer.classList.remove(className);
+              seeMore.remove();
+              contentContainer.scrollIntoView();
+            };
+  
+            contentContainer.parentNode.insertBefore(
+              seeMore,
+              contentContainer.nextSibling
+            ); 
+          }
+        } catch (ex) {
+          console.log("Error: ", ex);
+        }
+      }
+    }
+  }
+
+  function cartierCustomization() {
+    const dataFieldId = insideChatPane.getCurrentWorkflow().step.fields[0].field.id;
+    const initialMenu = $(insideChatPane.chatPane).find('.picklist[fid="' + dataFieldId + '"]');
+    if (initialMenu.length && !initialMenu.hasClass('custom-ui')) {
+      initialMenu.addClass('custom-ui').css('opacity', 0).closest('.messageContent').addClass('custom-ui');
+      initialMenu.prepend('<p class="custom-message">' + insideChatPane.getCurrentWorkflow().step.questionTextNoExistingData + '</p>');
+      initialMenu[0].ontouchmove = function (event) {
+        event.stopPropagation(); // to disable bodyScrollLock function (bug #46202)
+      }
+    }
+  }
+
+  function vcaCustomization() {
+    const dataFieldId = insideChatPane.getCurrentWorkflow().step.fields[0].field.id;
+    const initialMenu = $(insideChatPane.chatPane).find('.picklist[fid="' + dataFieldId + '"]');
+    if (initialMenu.length && !initialMenu.hasClass('custom-ui')) {
+      initialMenu.addClass('custom-ui').closest('.messageContent').addClass('custom-ui');
+      initialMenu.prepend('<p class="custom-message">' + insideChatPane.getCurrentWorkflow().step.questionTextNoExistingData + '</p>');
+      // append disclaimer text to the custom UI
+      let previousMessage = initialMenu.closest('.workflowMessage').prev().find('.content').html();
+      initialMenu.prepend('<p class="custom-message2">' + previousMessage + '</p>');
+      initialMenu[0].ontouchmove = function (event) {
+        event.stopPropagation(); // to disable bodyScrollLock function (bug #46202)
+      }
+    }
+  }
+
+  function customizePicklist() {
+    try {
+      const dataFieldName = insideChatPane.getCurrentWorkflow().step.fields[0].field.name;
+      let customCSS = '';
+
+      if (dataFieldName.search('VCA') > -1 && dataFieldName.search('Initial') > -1) {
+        vcaCustomization();
+        customCSS = 'customThemeVCA.css'; // single custom css file for multiple VCA chat themes
+      } else if (dataFieldName.search('CAR') > -1 && dataFieldName.search('Initial') > -1) {
+        cartierCustomization();
+        customCSS = 'customThemeCAR.css'; // single custom css file for multiple CAR chat themes
+      } else if (dataFieldName.search('Korea') > -1 && dataFieldName.search('Privacy Policy') > -1) {
+        koreaCustomization();
+      }
+
+      if (customCSS && chatDocument && !chatDocument.getElementById('customThemeGlobal')) {
+        customCSS = _insideCDN + 'custom/' + websiteId + '-' + customCSS + '?v=' + _insideScriptVersion;
+        $(chatDocument).find('body').prepend('<link id="customThemeGlobal" rel="stylesheet" type="text/css" media="all" href="' + customCSS + '">');
+      }
+    } catch (error) { }
+  }
+
+  _insideGraph.bind('picklistRendered', customizePicklist);
+  _insideGraph.bind("openchatv2", customizePicklist);
+  insideFrontInterface.bind("assistants", customizePicklist);
+  _insideGraph.defer(function () {
+    chatDocument = insideChatPane.frame.contentDocument;
+    websiteId = insideFrontInterface.chat.userid.split(':')[1];
+
+    customizePicklist();
+
+    chatDocument.on('click', '.picklistOption', function (e) {
+      try {
+        const dataFieldName = insideChatPane.getCurrentWorkflow().step.fields[0].field.name;
+        if (dataFieldName.search('Korea') > -1 && dataFieldName.search('Privacy Policy') > -1) {
+          // Store the user's selection in a cookie for 60 days
+          setTimeout(() => {
+            _insideGraph.setCookie('insidePrivacyPolicy', e.target.innerText, 60); 
+          }, 4000);
+        }
+      } catch (e) { }
+    });
+  }, function () {
+    return typeof insideChatPane !== 'undefined' && insideChatPane.frame && insideChatPane.chatPane;
+  });
+
+  $.inside.bind("chat", processMessages);
+
+  _insideGraph.defer(function () {
+    if(insideFrontInterface.chatSettings.name.toUpperCase().search('CAR') > -1) {
+      $('#inside_holder').addClass('cartier-chat-theme');
+    }
+  }, function () {
+    return insideFrontInterface.chatSettings && $('#inside_holder').length;
+  });
+}(_insideGraph.jQuery)
+
+/**
+ * Hide empty iframe during co-browse session
+ */
+_insideGraph.jQuery('head iframe').attr('id', 'blocked-in-cobrowse');

@@ -1,0 +1,106 @@
+//Cartier FR
+
+var cybTotalInt = setInterval(cybTotalChk,1000);
+
+function cybTotalChk(){
+	if (!!~window.location.href.toLowerCase().indexOf('onepagecheckout') && document.querySelector('.price-recap__list .price-recap__row.price-recap__row--subtotal .price') && !~window.location.href.toLowerCase().indexOf('thankyou')) {
+		let cybPrice = document.querySelector('.price-recap__list .price-recap__row.price-recap__row--subtotal .price .value').getAttribute("data-ytos-price")
+		let d = new Date();
+		d.setTime(d.getTime() + (3600 * 1000));
+		var expires = "expires=" + d.toGMTString();
+		document.cookie = "cybPrice=" + cybPrice + ";expires=" + expires + ";path=/";
+	}
+}
+
+if (!!~window.location.href.toLowerCase().indexOf('onepagecheckout/thankyou') && document.querySelector('.orderNumber') && (tc_vars.order_amount_ati_with_sf != undefined && tc_vars.order_amount_ati_with_sf != 0) ) {
+    window.cybOrderData = {
+        order_id: document.querySelector('.orderNumber').innerText,
+        value: tc_vars.order_amount_ati_with_sf
+    }
+    let cybItemArr = localStorage.getItem('ProdArrCyb') === null ? [] : localStorage.getItem('ProdArrCyb');
+    window._vteq = window._vteq || [];
+    window._vteq.push({
+        confirmation: {
+            items: cybItemArr,
+            orderId: cybOrderData.order_id,
+            total: cybOrderData.value,
+            generic: {
+                currency: "EUR"
+            }
+        }
+    });
+}
+
+try{
+	const cybfw = document.cookie.includes('cybbafwtest') ? '//cybba-latest-framework-minified-staging.s3.amazonaws.com/js-minified/cybba_latest_mini_v1.5.js' : '//d2rp1k1dldbai6.cloudfront.net/cybba_latest.min.js';
+    var shopUrlCYB = '1600';
+    !function(){
+        var e=function(e){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=e;var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)},t=~document.cookie.indexOf("cybbatest")?"files":"files1";e("https://"+t+".cybba.solutions/"+shopUrlCYB+"/loader.min.js"),e(cybfw),window._vteq=window._vteq||[],setTimeout(function(){window._vtsdk||e("https://files2.cybba.solutions/"+shopUrlCYB+"/loader.js?")},1100),setTimeout(function(){if("nestedVarDefined"in window&&!nestedVarDefined("_vtsdk.state.eventQueue")&&"_vtsdk"in window) _vtsdk.init();},1500)
+    }()
+}catch(e){}
+
+
+function waitForCartElementCYB() {
+    if (!!~window.location.href.indexOf('fr/OnePageCheckout/Cart') && document.querySelector('cart-list-item .cart-list-item__name') && document.querySelector('cart-list-item .image-wrapper a img') && document.querySelector('cart-list-item .cart-list-item__short-description') && document.querySelector('cart-list-item .cart-list-item__price .full.price .value')) {
+        window._vteq = window._vteq || [];
+        var cybProductName = document.querySelector('cart-list-item .cart-list-item__name').innerText.latinizeString();
+        var cybProductImage = document.querySelector('cart-list-item .image-wrapper a img').src;
+        var cybColor = document.querySelector('cart-list-item .cart-list-item__short-description').innerText.latinizeString();
+        var cybSubtotal = document.querySelector('cart-list-item .cart-list-item__price .full.price .value').innerText.trim().replace(/ /g, ' ').replace(/[^0-9.,]+/g, '');
+        var cybSize = document.querySelector('cart-list-item .cart-list-item__size .value') !== null ? document.querySelector('cart-list-item .cart-list-item__size .value').innerText.latinizeString() : 'N/A'
+        var pItems = [];
+        pItems.push({ 'ProductName': cybProductName, 'Color': cybColor, 'ProductImage': cybProductImage, 'Subtotal': cybSubtotal, 'size': cybSize });
+        _vteq.push({
+            'event': {
+                'event_name': 'cart',
+                'items': pItems,
+                'category': checkCartCategories()
+            }
+        });
+        if (document.querySelector('.valueToPay .price .value')) {
+            _vteq.push({
+                'event': {
+                    'event_name': 'abandonmentTotal',
+                    'total': document.querySelector('.valueToPay .price .value').innerText.trim().replace(/[^0-9,]+/g, '').replace(/ /g, '').match(/[$0-9,.]+/g)[0].replace(/,/g, '.')
+                }
+            });
+        }
+    } else {
+        setTimeout(waitForCartElementCYB, 250);
+    }
+}
+function waitForConsentElementCYB() {
+    let consentBox = document.querySelector('input[type="checkbox"][name*="ShippingAddressFormViewModel"]')
+    if (consentBox && !!~window.location.href.indexOf('OnePageCheckout/Confirmation')) {
+        document.querySelector('[type="email"]') && document.querySelector('[type="email"]').classList.add('cybAllow');
+        _vtsdk.tasks.inputEmailListening();
+        consentBox.addEventListener('click', function () {
+            _vteq.push({ "update": { "isSubscribedAlerts": this.checked } });
+            _vteq.push({ "update": { "isSubscribed": this.checked } });
+        })
+    } else {
+        setTimeout(waitForConsentElementCYB, 250);
+    }
+}
+
+function checkCartCategories() {
+    if (!!~window.location.href.indexOf('fr/OnePageCheckout/Cart')) {
+        var firstCartItem = document.querySelector('.cart__products-list .cart-list-item');
+        var firstItemAltForCategory = firstCartItem.querySelector('img').alt.toLowerCase();
+        var firstItemLink = document.querySelector(".shopping_img_block > a") && document.querySelector(".shopping_img_block > a").href;
+        var watchCategory = "montres";
+        var leatherCategory = /(maroquinerie)|(sac)/g;
+        var jewelryCategory = "joaillerie";
+        var category = "";
+        if (firstItemAltForCategory && firstItemAltForCategory.match(watchCategory)) {
+            category = 'watch'
+        } else if (firstItemAltForCategory && firstItemAltForCategory.match(leatherCategory)) {
+            category = 'leather'
+        } else if (firstItemAltForCategory && firstItemAltForCategory.match(jewelryCategory)) {
+            category = 'jewelry'
+        } else {
+            category = 'jewelry'
+        }
+        return category;
+    }
+}

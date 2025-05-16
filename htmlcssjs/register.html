@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription | Luxe Bijoux</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1 class="logo">Luxe Bijoux</h1>
+        <nav>
+            <a href="index.html">Accueil</a>
+            <a href="login.html">Connexion</a>
+        </nav>
+    </header>
+
+    <main class="auth-main">
+        <div class="auth-box">
+            <h2>Créer un compte</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Nom complet :</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email :</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe :</label>
+                    <input type="password" id="password" required minlength="6">
+                </div>
+                <button type="submit" class="btn-checkout">S'inscrire</button>
+            </form>
+            <p class="auth-hint">Déjà inscrit ? <a href="login.html">Connectez-vous</a></p>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

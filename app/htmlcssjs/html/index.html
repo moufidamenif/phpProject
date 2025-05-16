@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Boutique de Bijoux</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Boutique Raffinée</h1>
+  <nav>
+    <a href="#" class="tab-link active" data-tab="products">Produits</a>
+    <a href="#" class="tab-link" data-tab="cart">Panier</a>
+  </nav>
+</header>
+
+<main>
+  <section id="products" class="tab-content active">
+    <h2>Nos Bijoux</h2>
+    <div id="product-list"></div>
+  </section>
+
+  <section id="cart" class="tab-content">
+    <h2>Votre Panier</h2>
+    <div id="cart-items"></div>
+    <p id="cart-total"></p>
+    <button id="clear-cart">Vider le panier</button>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 Boutique Raffinée. Tous droits réservés.
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

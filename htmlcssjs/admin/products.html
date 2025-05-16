@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion Produits | Luxe Bijoux</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Styles spécifiques admin */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!sessionStorage.getItem('isAdmin')) {
+            window.location.href = "../login.html";
+        }
+    </script>
+
+    <div class="admin-container">
+        <div class="admin-sidebar">
+            <h2>Administration</h2>
+            <nav><!-- Identique à index.html --></nav>
+        </div>
+
+        <div class="admin-main">
+            <h1>Gestion des Produits</h1>
+            
+            <button onclick="addProduct()">+ Ajouter un produit</button>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Collier en Or</td>
+                        <td>199.99€</td>
+                        <td>
+                            <button>Éditer</button>
+                            <button>Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function addProduct() {
+            alert("Fonctionnalité à implémenter !");
+        }
+    </script>
+</body>
+</html>

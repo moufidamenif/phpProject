@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Panier | Luxe Bijoux</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1 class="logo">Luxe Bijoux</h1>
+        <nav>
+            <a href="index.html">Accueil</a>
+            <a href="products.html">Nos Bijoux</a>
+            <a href="cart.html" class="active">Panier (<span class="cart-count">0</span>)</a>
+        </nav>
+    </header>
+
+    <main class="cart-main">
+        <h2>Votre Panier</h2>
+        
+        <div id="cart-items">
+            <!-- Articles ajoutés dynamiquement -->
+            <p class="empty-cart">Votre panier est vide</p>
+        </div>
+        
+        <div class="cart-summary">
+            <h3>Résumé</h3>
+            <div class="summary-row">
+                <span>Sous-total :</span>
+                <span id="subtotal">0.00€</span>
+            </div>
+            <button id="checkout-btn" class="btn-checkout">Valider la commande</button>
+        </div>
+    </main>
+
+    <script src="js/cart.js"></script>
+</body>
+</html>
