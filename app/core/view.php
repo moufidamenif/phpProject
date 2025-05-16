@@ -16,6 +16,9 @@
             echo"this file doesn't exist ";
         }
     }
+    public static function only_extract($view_data = []){
+         extract($view_data);
+    }
 
  }
 ?>

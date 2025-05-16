@@ -10,6 +10,7 @@ define("MODELS",APP.'models'.DS);
 define("VIEWS",APP.'views'.DS);
 define("UPLOADS",ROOT_PATH.'public'.DS.'uploads'.DS);
 define("LIBS",ROOT_PATH.'lib'.DS);
+define("BURL","http://localhost:8000/");
 // configuration files 
 require_once(CONFIG.'config.php');
 require_once(CONFIG.'helpers.php');
